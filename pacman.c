@@ -1,53 +1,54 @@
 // Pacman Game in C language 
-#include <conio.h> 
-#include <stdio.h> 
-#include <stdlib.h> 
+#include <conio.h> // 콘솔 창에서 입력 및 출력을 다루는 함수와 상수들을 제공
+#include <stdio.h> // 표준 입출력
+#include <stdlib.h> // 표준 라이브러리 함수
 
 // All the elements to be used 
 // Declared here 
-#define WIDTH 40 
-#define HEIGHT 20 
-#define PACMAN 'C' 
-#define WALL '#' 
-#define FOOD '.' 
-#define EMPTY ' ' 
-#define DEMON 'X' 
+#define WIDTH 40 // 게임 보드 넓이
+#define HEIGHT 20 // 게임 보드 높이
+#define PACMAN 'C' // 팩맨
+#define WALL '#' // 벽
+#define FOOD '.' // 음식
+#define EMPTY ' ' // 빈 공간
+#define DEMON 'X' // 악마
 
 // Global Variables are 
 // Declared here 
-int res = 0; 
-int score = 0; 
-int pacman_x, pacman_y; 
-char board[HEIGHT][WIDTH]; 
-int food = 0; 
-int curr = 0; 
-void initialize() 
+int res = 0; // 게임 결과
+int score = 0; //게임 점수
+int pacman_x, pacman_y; // 팩맨 현재 위치
+char board[HEIGHT][WIDTH]; // 게임 보드를 나타내는 2차원 배열
+int food = 0; // 음식의 총 개수
+int curr = 0; // 현재 상태
+void initialize() // 게임 보드 초기화 역할 함
 { 
 	// Putting Walls as boundary in the Game 
+	// 게임 보드를 높이, 너비로 정의된 크기로 설정하고, 중첩 for루프를 사용 
 	for (int i = 0; i < HEIGHT; i++) { 
 		for (int j = 0; j < WIDTH; j++) { 
 			if (i == 0 || j == WIDTH - 1 || j == 0 
 				|| i == HEIGHT - 1) { 
 				board[i][j] = WALL; 
-			} 
+			} // 게임보드의 가장자리에 벽 배치
 			else
 				board[i][j] = EMPTY; 
-		} 
+		} // 그 외 나머지 공간은 빈 공간으로 설정
 	} 
 
 	// Putting Walls inside the Game 
-	int count = 50; 
-	while (count != 0) { 
-		int i = (rand() % (HEIGHT + 1)); 
-		int j = (rand() % (WIDTH + 1)); 
+	int count = 50; // 50으로 초기화
+	while (count != 0) { // 50개의 벽을 랜덤하게 게임 보드 내부에 배치 
+		int i = (rand() % (HEIGHT + 1)); // 0부터 height + 1 난수 생성
+		int j = (rand() % (WIDTH + 1)); // 0부터 width + 1 난수 생
 
-		if (board[i][j] != WALL && board[i][j] != PACMAN) { 
-			board[i][j] = WALL; 
-			count--; 
+		if (board[i][j] != WALL && board[i][j] != PACMAN) { // 선택한 위치 의 셀이 벽이 아니고 팩맨이 닌 경우 
+			board[i][j] = WALL; // 해당 위치에 벽 배
+			count--; // count 변수 감
 		} 
-	} 
+	} // while 루프 반복하면서 50개의 벽 랜덤하게 배치 
 
-	int val = 5; 
+	int val = 5; // while 루프를 5번 반복하기 위해 변수를 5로 초기화
 	while (val--) { 
 		int row = (rand() % (HEIGHT + 1)); 
 		for (int j = 3; j < WIDTH - 3; j++) { 
