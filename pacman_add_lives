@@ -89,7 +89,7 @@ void draw()
 		printf("\n"); 
 	} 
 	printf("Score: %d\n", score); 
-	printf("Lives : %d\n", lives); //현재 목숨 개수 출력력
+	printf("Lives : %d\n", lives); //현재 목숨 개수 출력
 } 
 
 // Function enables to move the Cursor 
