@@ -5,7 +5,7 @@ int pacman_x, pacman_y;
 char board[HEIGHT][WIDTH]; 
 int food = 0; 
 int curr = 0; 
-int lives = 3; //초기 목숨 개수
+int lives = 3; // 초기 목숨 개수
 int isEaten = 0; // 악마에게 먹힌 상태
 void initialize() 
 { 
