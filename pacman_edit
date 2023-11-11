@@ -21,6 +21,8 @@ int pacman_x, pacman_y;
 char board[HEIGHT][WIDTH]; 
 int food = 0; 
 int curr = 0; 
+int lives = 3; // 초기 목숨 개수
+int isEaten = 0; // 악마에게 먹힌 상태
 
 void initialize() 
 { 
@@ -104,6 +106,7 @@ void draw()
 		printf("\n"); 
 	} 
 	printf("Score: %d\n", score); 
+	printf("Lives : %d\n", lives); //현재 목숨 개수 출력
 } 
 
 // Function enables to move the Cursor 
@@ -123,7 +126,14 @@ void move(int move_x, int move_y)
 			} 
 		} 
 		else if (board[y][x] == DEMON) { 
-			res = 1; 
+			if (board[y][x] == DEMON) { // 팩맨이 악마에게 먹힌 경우
+			    isEaten = 1; 
+			    lives--; //목숨 감소
+			    if (lives == 0) { // 목숨이 0 이면
+			        res = 1; // 게임 오버
+			        return;	
+			    }
+			}
 		} 
 
 		board[pacman_y][pacman_x] = EMPTY; 
@@ -132,6 +142,26 @@ void move(int move_x, int move_y)
 		board[pacman_y][pacman_x] = PACMAN; 
 	} 
 } 
+
+void moveDemon() { // moveDemon() 함수 추가
+    for (int i = 0; i < HEIGHT; i++) {
+        for (int j = 0; j < WIDTH; j++) {
+            if (board[i][j] == DEMON) {
+                int move_x = (rand() % 3) - 1; // -1, 0, 1 중 하나를 랜덤하게 선택
+                int move_y = (rand() % 3) - 1; // -1, 0, 1 중 하나를 랜덤하게 선택
+
+                int x = j + move_x;
+                int y = i + move_y;
+
+                // 해당 위치가 벽이거나 팩맨의 위치가 아닐 때 악마 이동 
+                if (board[y][x] != WALL && board[y][x] != PACMAN) { 
+                    board[i][j] = EMPTY; // 이동 전의 위치를 빈 공간으로 설정
+                    board[y][x] = DEMON; // 새로운 위치에 악마 표시
+                }
+            }
+        }
+    }
+}
 
 // Main Function 
 int main() 
@@ -174,6 +204,8 @@ int main()
 
 		// Taking the Input from the user 
 		ch = getch(); 
+
+		moveDemon(); // 악마 움직임 처리
 
 		// Moving According to the 
 		// input character 
