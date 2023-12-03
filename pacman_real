@@ -1,0 +1,291 @@
+#include <conio.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <windows.h>
+
+#define HEIGHT 30
+#define WIDTH 50
+#define PACMAN 'C'
+#define WALL '#'
+#define FOOD '.'
+#define EMPTY ' '
+#define DEMON 'X'
+
+struct Difficulty {
+    int lives;
+    int demonMoveEnabled;
+    int wallCount;
+    int demonadd;
+    int randomfood;
+    int visibilityRadius;
+};
+
+int res = 0;
+int score = 0;
+int pacman_x, pacman_y;
+char board[HEIGHT][WIDTH];
+int food = 0;
+int curr = 0;
+int lives;
+int isEaten = 0;
+
+void initialize(struct Difficulty difficulty) {
+    for (int i = 0; i < HEIGHT; i++) {
+        for (int j = 0; j < WIDTH; j++) {
+            
+            if (i == 0 || i == HEIGHT - 1 || j == 0 || j == WIDTH - 1) {
+                board[i][j] = WALL;
+            } else if (i > 1 && i < HEIGHT - 2 && j > 1 && j < WIDTH - 2 && rand() % 100 < 20) {
+                board[i][j] = WALL;
+            } else {
+                board[i][j] = EMPTY;
+            }
+        }
+    }
+
+    // 악마 추가
+    for (int k = 0; k < difficulty.demonadd; k++) {
+        int count = 1;
+        while (count != 0) {
+            int i = rand() % HEIGHT;
+            int j = rand() % WIDTH;
+
+            if (board[i][j] != WALL && board[i][j] != PACMAN && board[i][j] != DEMON) {
+                board[i][j] = DEMON;
+                count--;
+            }
+        }
+    }
+
+    // 중앙 벽 추가
+    int count = 20 + difficulty.wallCount;
+    while (count != 0) {
+        int i = (rand() % (HEIGHT - 2)) + 1;
+        int j = (rand() % (WIDTH - 2)) + 1;
+    
+        if (board[i][j] != WALL && board[i][j] != PACMAN) {
+            // 추가된 부분: 주변에 벽이 없는 경우에만 벽 추가
+            if (board[i-1][j] != WALL && board[i+1][j] != WALL && board[i][j-1] != WALL && board[i][j+1] != WALL) {
+                board[i][j] = WALL;
+                count--;
+            }
+        }
+    }
+    
+    // 팩맨 초기 위치 설정
+    pacman_x = WIDTH / 2;
+    pacman_y = HEIGHT / 2;
+    board[pacman_y][pacman_x] = PACMAN;
+}
+
+
+void placeFood(struct Difficulty difficulty, int *totalFood) {
+    int foodCount = 50 + difficulty.randomfood; 
+    *totalFood = foodCount; // 초기 음식의 수를 전달
+
+    while (foodCount != 0) {
+        int i = (rand() % (HEIGHT - 2)) + 1; 
+        int j = (rand() % (WIDTH - 2)) + 1;   
+
+        if (board[i][j] != WALL && board[i][j] != DEMON && board[i][j] != PACMAN && board[i][j] != FOOD) {
+            board[i][j] = FOOD;
+            foodCount--;
+        }
+    }
+}
+
+void moveDemon() {
+    if (lives <= 0) {
+        return;
+    }
+    for (int i = 0; i < HEIGHT; i++) {
+        for (int j = 0; j < WIDTH; j++) {
+            if (board[i][j] == DEMON) {
+                if (rand() % 2 == 0 && isEaten == 0) {
+                    int move_x, move_y;
+                    do {
+                        move_x = (rand() % 3 - 1) * 2;
+                        move_y = (rand() % 3 - 1) * 2;
+                    } while (j + move_x < 0 || j + move_x >= WIDTH || i + move_y < 0 || i + move_y >= HEIGHT ||
+                             board[i + move_y][j + move_x] == WALL || board[i + move_y][j + move_x] == PACMAN ||
+                             board[i + move_y][j + move_x] == FOOD || board[i + move_y][j + move_x] == DEMON);
+
+                    int new_x = j + move_x;
+                    int new_y = i + move_y;
+
+                    board[i][j] = EMPTY;
+                    board[new_y][new_x] = DEMON;
+                }
+            }
+        }
+    }
+}
+
+void draw(struct Difficulty difficulty, int totalFood) {
+    system("cls");
+
+    for (int i = 0; i < HEIGHT; i++) {
+        for (int j = 0; j < WIDTH; j++) {
+            if (difficulty.demonMoveEnabled == 1 && difficulty.visibilityRadius > 0) {
+                int distance = abs(pacman_x - j) + abs(pacman_y - i); 
+
+                if (distance <= difficulty.visibilityRadius) {
+                    if (board[i][j] == PACMAN) {
+                        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
+                        printf("%c", board[i][j]);
+                        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+                    } else if (board[i][j] == DEMON) {
+                        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+                        printf("%c", board[i][j]);
+                        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+                    } else {
+                        printf("%c", board[i][j]);
+                    }
+                } else {
+                    printf(" ");
+                }
+            } else {
+                if (board[i][j] == PACMAN) {
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
+                    printf("%c", board[i][j]);
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+                } else if (board[i][j] == DEMON) {
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+                    printf("%c", board[i][j]);
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+                } else {
+                    printf("%c", board[i][j]);
+                }
+            }
+        }
+        printf("\n");
+    }
+
+    printf("Score: %d\n", score);
+    printf("Lives: %d\n", lives);
+    printf("Total Food: %d\n", totalFood);
+}
+
+void move(int move_x, int move_y) {
+    int x = pacman_x + move_x;
+    int y = pacman_y + move_y;
+
+    if (board[y][x] != WALL) {
+        char originalContent = board[y][x];
+
+        if (originalContent == FOOD) {
+            score++;
+            food--;
+            curr++;
+            if (food == 0) {
+                res = 2;
+                return;
+            }
+        } else if (originalContent == DEMON) {
+            isEaten = 1;
+            lives--;
+            if (lives == 0) {
+                res = 1;
+                return;
+            }
+        }
+
+        board[pacman_y][pacman_x] = EMPTY;
+        pacman_x = x;
+        pacman_y = y;
+        board[pacman_y][pacman_x] = PACMAN;
+    }
+}
+
+int gameStart(struct Difficulty difficulty) {
+    int totalFood; // 전체 음식의 수를 저장할 변수
+
+    initialize(difficulty);
+    placeFood(difficulty, &totalFood); // totalFood를 전달
+    char ch;
+
+    while (1) {
+        if (difficulty.demonMoveEnabled == 1) {
+            moveDemon();
+        }
+        draw(difficulty, totalFood); // totalFood를 draw 함수에 전달
+
+        printf("Total Food eaten: %d\n", curr);
+
+        ch = getch();
+
+        switch (ch) {
+            case 'w':
+                move(0, -1);
+                break;
+            case 's':
+                move(0, 1);
+                break;
+            case 'a':
+                move(-1, 0);
+                break;
+            case 'd':
+                move(1, 0);
+                break;
+            case 'q':
+                printf("Game Over! Your Score: %d\n", score);
+                return 0;
+        }
+
+        if (res == 1) {
+            printf("Game Over! Dead by Demon\n Your Score: %d\n", score);
+            exit(0);
+        } else if (res == 2) {
+            printf("You Win! \n Your Score: %d\n", score);
+            exit(0);
+        }
+    }
+}
+
+int main() {
+   
+    int select;
+
+    while (1) {
+    system("cls");
+    puts("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
+    puts("┃        ▤▤ 팩맨 게임 ▤▤       ┃");
+    puts("┃      ▤▤  난이도 선택  ▤▤     ┃");
+    puts("┃                                  ┃");
+    puts("┃          1. 초     급            ┃");
+    puts("┃                                  ┃");
+    puts("┃          2. 중     급            ┃");
+    puts("┃                                  ┃");
+    puts("┃          3. 고     급            ┃");
+    puts("┃                                  ┃");
+    puts("┃          0. 종     료            ┃");
+    puts("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
+    printf(" Select > ");
+    scanf("%d", &select);
+    system("cls");
+
+    switch(select) {
+        case 1:
+            lives = 5;
+            gameStart((struct Difficulty){.lives = lives, .demonMoveEnabled = 0, .wallCount = 0, .demonadd = 10, .randomfood = 0, .visibilityRadius = 0});
+            break;
+        case 2:
+            lives = 3;
+            gameStart((struct Difficulty){.lives = lives, .demonMoveEnabled = 1, .wallCount = 5, .demonadd = 10, .randomfood = 15, .visibilityRadius = 0});
+            break;
+        case 3:
+    lives = 1;
+    gameStart((struct Difficulty){.lives = lives, .demonMoveEnabled = 1, .wallCount = 10, .demonadd = 20, .randomfood = 25, .visibilityRadius = 7});
+    break;
+
+        case 0:
+            exit(0);
+        default:
+            printf("잘못된 접근입니다.\n");
+            break;
+    }
+}
+    
+    return 1;
+}
