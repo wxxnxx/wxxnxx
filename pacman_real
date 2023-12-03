@@ -13,12 +13,12 @@
 #define DEMON 'X'
 
 struct Difficulty {
-    int lives;
-    int demonMoveEnabled;
-    int wallCount;
-    int demonadd;
-    int randomfood;
-    int visibilityRadius;
+    int lives; // 목숨
+    int demonMoveEnabled; // 악마 움직임
+    int wallCount; // 벽 추가 개수
+    int demonadd; // 악마 추가 개수
+    int randomfood; // 음식 추가 개수
+    int visibilityRadius; // 시야 제한
 };
 
 int res = 0;
