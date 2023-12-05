@@ -39,12 +39,12 @@ void initialize(struct Difficulty difficulty) {
             } else if (i > 1 && i < HEIGHT - 2 && j > 1 && j < WIDTH - 2 && rand() % 100 < 20) {
                 board[i][j] = WALL; // 내부 영역에서 각 칸에 대해 20%의 확률로 벽 생성
             } else {
-                board[i][j] = EMPTY; // 나머지 공간은 빈 공간간
+                board[i][j] = EMPTY; // 나머지 공간은 빈 공간
             }
         }
     }
 
-    /직
+
 void moveDemon() {
     if (lives <= 0) {
         return;
