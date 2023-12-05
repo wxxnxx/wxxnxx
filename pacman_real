@@ -1,3 +1,4 @@
+```ruby
 // Pacman Game in C language
 #include <conio.h> // 콘솔 입출력
 #include <stdio.h> // 표준 입출력 함수
@@ -252,3 +253,4 @@ int main() {
     
     return 1;
 }
+```
