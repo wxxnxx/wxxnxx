@@ -1,96 +1,50 @@
 // Pacman Game in C language
-#include <conio.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <windows.h>
+#include <conio.h> // 콘솔 입출력
+#include <stdio.h> // 표준 입출력 함수
+#include <stdlib.h> // 유틸리티 함수
+#include <windows.h> // Windows API 함수
 
-#define HEIGHT 30
-#define WIDTH 50
-#define PACMAN 'C'
-#define WALL '#'
-#define FOOD '.'
-#define EMPTY ' '
-#define DEMON 'X'
-
+#define HEIGHT 30 // 높이
+#define WIDTH 50 // 너비
+#define PACMAN 'C' // 팩맨
+#define WALL '#' // 벽
+#define FOOD '.' // 음식
+#define EMPTY ' ' // 빈 공간
+#define DEMON 'X' // 악마
+ 
 struct Difficulty {
-    int lives;
-    int demonMoveEnabled;
-    int wallCount;
-    int demonadd;
-    int randomfood;
-    int visibilityRadius;
+    int lives; // 목숨
+    int demonMoveEnabled; // 악마 움직임
+    int wallCount; // 추가 벽
+    int demonadd; // 추가 악마
+    int randomfood; // 추가 음식
+    int visibilityRadius; // 가시 반경
 };
 
-int res = 0;
-int score = 0;
-int pacman_x, pacman_y;
-char board[HEIGHT][WIDTH];
-int food = 0;
-int curr = 0;
-int lives;
-int isEaten = 0;
+int res = 0; // 결과
+int score = 0; // 점수
+int pacman_x, pacman_y; // 팩맨 위치
+char board[HEIGHT][WIDTH]; // 게임 보드
+int food = 0; // 음식
+int curr = 0; // 현재 점수
+int lives; // 목숨
+int isEaten = 0; // 먹은 음식 개수
 
+// 게임 보드 초기화
 void initialize(struct Difficulty difficulty) {
     for (int i = 0; i < HEIGHT; i++) {
         for (int j = 0; j < WIDTH; j++) {
-            
             if (i == 0 || i == HEIGHT - 1 || j == 0 || j == WIDTH - 1) {
-                board[i][j] = WALL;
+                board[i][j] = WALL; // 가장자리 벽 생성
             } else if (i > 1 && i < HEIGHT - 2 && j > 1 && j < WIDTH - 2 && rand() % 100 < 20) {
-                board[i][j] = WALL;
+                board[i][j] = WALL; // 내부 영역에서 각 칸에 대해 20%의 확률로 벽 생성
             } else {
-                board[i][j] = EMPTY;
+                board[i][j] = EMPTY; // 나머지 공간은 빈 공간간
             }
         }
     }
 
-    for (int k = 0; k < difficulty.demonadd; k++) {
-        int count = 1;
-        while (count != 0) {
-            int i = rand() % HEIGHT;
-            int j = rand() % WIDTH;
-
-            if (board[i][j] != WALL && board[i][j] != PACMAN && board[i][j] != DEMON) {
-                board[i][j] = DEMON;
-                count--;
-            }
-        }
-    }
-
-    int count = 20 + difficulty.wallCount;
-    while (count != 0) {
-        int i = (rand() % (HEIGHT - 2)) + 1;
-        int j = (rand() % (WIDTH - 2)) + 1;
-    
-        if (board[i][j] != WALL && board[i][j] != PACMAN) {
-            if (board[i-1][j] != WALL && board[i+1][j] != WALL && board[i][j-1] != WALL && board[i][j+1] != WALL) {
-                board[i][j] = WALL;
-                count--;
-            }
-        }
-    }
-    
-    pacman_x = WIDTH / 2;
-    pacman_y = HEIGHT / 2;
-    board[pacman_y][pacman_x] = PACMAN;
-}
-
-
-void placeFood(struct Difficulty difficulty, int *totalFood) {
-    int foodCount = 50 + difficulty.randomfood; 
-    *totalFood = foodCount;
-
-    while (foodCount != 0) {
-        int i = (rand() % (HEIGHT - 2)) + 1; 
-        int j = (rand() % (WIDTH - 2)) + 1;   
-
-        if (board[i][j] != WALL && board[i][j] != DEMON && board[i][j] != PACMAN && board[i][j] != FOOD) {
-            board[i][j] = FOOD;
-            foodCount--;
-        }
-    }
-}
-
+    /직
 void moveDemon() {
     if (lives <= 0) {
         return;
