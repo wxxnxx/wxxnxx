@@ -90,12 +90,12 @@ void draw(struct Difficulty difficulty, int totalFood) {
                         printf("%c", board[i][j]);
                         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
                     } 
-					else if (board[i][j] == WALL){
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 9);
-                    printf("%c", board[i][j]);
-                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
-					}
-					else {
+			else if (board[i][j] == WALL){
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 9);
+			printf("%c", board[i][j]);
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+			}
+			else {
                         printf("%c", board[i][j]);
                     }
                 } else {
@@ -112,7 +112,7 @@ void draw(struct Difficulty difficulty, int totalFood) {
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
                 } 
 				else if (board[i][j] == WALL){
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 9);
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 9);
                     printf("%c", board[i][j]);
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 				}
