@@ -41,7 +41,51 @@ void initialize(struct Difficulty difficulty) {
                 board[i][j] = EMPTY; // 나머지 공간은 빈 공간
             }
         }
+    	for (int k = 0; k < difficulty.demonadd; k++) { 
+        int count = 1;
+        while (count != 0) {
+            int i = rand() % HEIGHT; // 악마 무작위로 추가
+            int j = rand() % WIDTH;
+
+            if (board[i][j] != WALL && board[i][j] != PACMAN && board[i][j] != DEMON) {
+                board[i][j] = DEMON; // 벽, 팩맨, 악마가 아닌 곳에 배치
+                count--;
+            }
+        }
     }
+
+   	 int count = 20 + difficulty.wallCount;
+	 while (count != 0) {
+		int i = (rand() % (HEIGHT - 2)) + 1; // 벽 무작위로 추가
+		int j = (rand() % (WIDTH - 2)) + 1;
+    
+        if (board[i][j] != WALL && board[i][j] != PACMAN) {
+            if (board[i-1][j] != WALL && board[i+1][j] != WALL && board[i][j-1] != WALL && board[i][j+1] != WALL) {
+                board[i][j] = WALL; // 해당 위치의 상하좌가 벽이 아닐 때 벽 추가
+                count--;
+            }
+        }
+    }
+    
+    pacman_x = WIDTH / 2;
+    pacman_y = HEIGHT / 2;
+    board[pacman_y][pacman_x] = PACMAN;
+    }
+
+void placeFood(struct Difficulty difficulty, int *totalFood) { // 음식 무작위로 배치
+    int foodCount = 1 + difficulty.randomfood; 
+    *totalFood = foodCount; // totalFood가 가리키는 메모리 주소에 foodCount 값을 저장
+
+    while (foodCount != 0) {
+        int i = (rand() % (HEIGHT - 2)) + 1; 
+        int j = (rand() % (WIDTH - 2)) + 1;   
+
+        if (board[i][j] != WALL && board[i][j] != DEMON && board[i][j] != PACMAN && board[i][j] != FOOD) {
+            board[i][j] = FOOD; // 벽, 악마, 팩맨, 음식이 없는 곳에 배치
+            foodCount--;
+        }
+    }
+}
 
 // 악마 움직임 로직
 void moveDemon() {
@@ -167,7 +211,7 @@ int gameStart(struct Difficulty difficulty) {
     int totalFood;
 
     initialize(difficulty); // 게임 초기화
-    placeFood(difficulty, &totalFood); // 음식 배치, 전체 음식 개수
+    placeFood(difficulty, totalFood); // 음식 배치, 전체 음식 개수
     char ch;
 
     while (1) {
@@ -202,7 +246,7 @@ int gameStart(struct Difficulty difficulty) {
         if (res == 1) { // 승리했을 때
             printf("Game Over! Dead by Demon\n Your Score: %d\n", score);
             exit(0);
-        } else if (res == 2) { //패배했을 때
+        } else if (curr == totalFood) { //패배했을 때
             printf("You Win! \n Your Score: %d\n", score);
             exit(0);
         }
@@ -235,17 +279,17 @@ int main() {
         case 1: // 난이도 쉬움
             lives = 5;
             gameStart((struct Difficulty){.lives = lives, .demonMoveEnabled = 0, .wallCount = 0, 
-		    			.demonadd = 10, .randomfood = 0, .visibilityRadius = 0});
+		    			.demonadd = 10, .randomfood = 0, .visibilityRadius = 0}, totalFood);
             break;
         case 2: // 난이도 보통
             lives = 3;
             gameStart((struct Difficulty){.lives = lives, .demonMoveEnabled = 1, .wallCount = 5, 
-		    			.demonadd = 10, .randomfood = 15, .visibilityRadius = 0});
+		    			.demonadd = 10, .randomfood = 15, .visibilityRadius = 0}, totalFood);
             break;
         case 3:// 난이도 어려움
     lives = 1;
     gameStart((struct Difficulty){.lives = lives, .demonMoveEnabled = 1, .wallCount = 10, 
-	    					.demonadd = 20, .randomfood = 25, .visibilityRadius = 7});
+	    					.demonadd = 20, .randomfood = 25, .visibilityRadius = 7}, totalFood);
     break;
 
         case 0: // 프로그램 종료
