@@ -60,7 +60,7 @@ void moveDemon() {
 		    (j + move_x < 0 || j + move_x >= WIDTH || i + move_y < 0 || i + move_y >= HEIGHT ||
 		     board[i + move_y][j + move_x] == WALL || board[i + move_y][j + move_x] == PACMAN ||
 		     board[i + move_y][j + move_x] == FOOD || board[i + move_y][j + move_x] == DEMON);
-		    // 악마 이동동
+		    // 악마 이동
                     int new_x = j + move_x;
                     int new_y = i + move_y;
 
@@ -211,22 +211,22 @@ int gameStart(struct Difficulty difficulty) {
 
 int main() {
    
-    int select; // 난이도 선택 변수수
+    int select; // 난이도 선택 변수
 
     while (1) {
     system("cls");
-    puts("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
-    puts("┃        ▤▤ 팩맨 게임 ▤▤         ┃");
-    puts("┃      ▤▤  난이도 선택  ▤▤       ┃");
-    puts("┃                                  ┃");
-    puts("┃          1. 쉬      움            ┃");
-    puts("┃                                  ┃");
-    puts("┃          2. 보      통           ┃");
-    puts("┃                                  ┃");
-    puts("┃          3. 어  려  움           ┃");
-    puts("┃                                  ┃");
-    puts("┃          0. 종      료           ┃");
-    puts("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
+    printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+    printf("┃        ▤▤ 팩맨 게임 ▤▤        ┃\n");
+    printf("┃      ▤▤  난이도 선택  ▤▤      ┃\n");
+    printf("┃                                  ┃\n");
+    printf("┃          1. 쉬      움           ┃\n");
+    printf("┃                                  ┃\n");
+    printf("┃          2. 보      통           ┃\n");
+    printf("┃                                  ┃\n");
+    printf("┃          3. 어  려  움           ┃\n");
+    printf("┃                                  ┃\n");
+    printf("┃          0. 종      료           ┃\n");
+    printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
     printf(" Select > ");
     scanf("%d", &select);
     system("cls");
@@ -234,18 +234,21 @@ int main() {
     switch(select) {
         case 1: // 난이도 쉬움
             lives = 5;
-            gameStart((struct Difficulty){.lives = lives, .demonMoveEnabled = 0, .wallCount = 0, .demonadd = 10, .randomfood = 0, .visibilityRadius = 0});
+            gameStart((struct Difficulty){.lives = lives, .demonMoveEnabled = 0, .wallCount = 0, 
+		    			.demonadd = 10, .randomfood = 0, .visibilityRadius = 0});
             break;
         case 2: // 난이도 보통
             lives = 3;
-            gameStart((struct Difficulty){.lives = lives, .demonMoveEnabled = 1, .wallCount = 5, .demonadd = 10, .randomfood = 15, .visibilityRadius = 0});
+            gameStart((struct Difficulty){.lives = lives, .demonMoveEnabled = 1, .wallCount = 5, 
+		    			.demonadd = 10, .randomfood = 15, .visibilityRadius = 0});
             break;
         case 3:// 난이도 어려움
     lives = 1;
-    gameStart((struct Difficulty){.lives = lives, .demonMoveEnabled = 1, .wallCount = 10, .demonadd = 20, .randomfood = 25, .visibilityRadius = 7});
+    gameStart((struct Difficulty){.lives = lives, .demonMoveEnabled = 1, .wallCount = 10, 
+	    					.demonadd = 20, .randomfood = 25, .visibilityRadius = 7});
     break;
 
-        case 0: // 프로그램 종료료
+        case 0: // 프로그램 종료
             exit(0);
         default:
             printf("잘못된 접근입니다.\n");
