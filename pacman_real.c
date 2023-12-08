@@ -287,10 +287,10 @@ int main() {
 		    			.demonadd = 10, .randomfood = 15, .visibilityRadius = 0}, totalFood);
             break;
         case 3:// 난이도 어려움
-    lives = 1;
-    gameStart((struct Difficulty){.lives = lives, .demonMoveEnabled = 1, .wallCount = 10, 
-	    					.demonadd = 20, .randomfood = 25, .visibilityRadius = 7}, totalFood);
-    break;
+	    lives = 1;
+	    gameStart((struct Difficulty){.lives = lives, .demonMoveEnabled = 1, .wallCount = 10, 
+					.demonadd = 20, .randomfood = 25, .visibilityRadius = 7}, totalFood);
+	    break;
 
         case 0: // 프로그램 종료
             exit(0);
